@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - LumiLens</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('user_dashboard') }}" class="logo">LumiLens</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('photographers') }}">Browse Photographers</a></li>
+                <li><a href="{{ url_for('gallery') }}" class="active">Gallery</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <div class="container">
+            <h1 class="page-title">Inspiration Gallery</h1>
+            <p class="page-subtitle">Browse beautiful photography to share ideas with your photographer</p>
+
+            {% for category, images in gallery.items() %}
+            <h2 class="gallery-category">{{ category|title }}</h2>
+            <div class="gallery-grid">
+                {% for image in images %}
+                <div class="gallery-item">
+                    <img src="{{ image }}" alt="{{ category }}">
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="chatbot-container">
+        <div id="chatbot-icon" onclick="toggleChatbot()">💬</div>
+        <div id="chatbot-window" style="display: none;">
+            <div class="chatbot-header">
+                <h3>LumiLens Assistant</h3>
+                <button onclick="toggleChatbot()" class="close-btn">×</button>
+            </div>
+            <div id="chatbot-messages">
+                <div class="bot-message">
+                    <p>Hello! 👋 How can I help you today?</p>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input-field" placeholder="Type your message...">
+                <button onclick="sendChatbotMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+
+</html>

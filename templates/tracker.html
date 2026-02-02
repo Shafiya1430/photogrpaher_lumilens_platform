@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Track Booking - LumiLens{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="container">
+        <h1 class="page-title">Booking Progress</h1>
+        <p class="page-subtitle">Track your session status in real-time</p>
+
+        <div class="tracker-card">
+            <div class="tracker-header">
+                <div class="booking-identifier">
+                    <span class="id-badge">#{{ booking.id }}</span>
+                    <h3>{{ booking.photographer_name }}</h3>
+                </div>
+                <div class="booking-summary-mini">
+                    <span>{{ booking.event_type }}</span>
+                    <span class="dot">•</span>
+                    <span>{{ booking.event_date }}</span>
+                </div>
+            </div>
+
+            <div class="progress-box">
+                <div class="progress-steps-vertical">
+                    {% for status in statuses %}
+                    <div
+                        class="step-item {% if loop.index0 <= current_index %}completed{% endif %} {% if loop.index0 == current_index %}current{% endif %}">
+                        <div class="step-marker">
+                            {% if loop.index0 < current_index %} <span class="check">✓</span>
+                                {% else %}
+                                <span class="num">{{ loop.index }}</span>
+                                {% endif %}
+                        </div>
+                        <div class="step-content">
+                            <h4 class="step-title">{{ status }}</h4>
+                            <p class="step-desc">
+                                {% if status == 'Requested' %}Waiting for photographer to accept{% endif %}
+                                {% if status == 'Accepted' %}Photographer has confirmed availability{% endif %}
+                                {% if status == 'Shoot Started' %}The photography session is currently happening{% endif
+                                %}
+                                {% if status == 'Editing' %}Post-processing and editing in progress{% endif %}
+                                {% if status == 'Delivered' %}Your beautiful memories are ready!{% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="tracker-actions-modern">
+                <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">Go to Dashboard</a>
+                {% if booking.status == 'Delivered' %}
+                <a href="{{ url_for('review', booking_id=booking.id) }}" class="btn btn-primary">Leave a Review</a>
+                {% endif %}
+                <button class="btn btn-primary"
+                    onclick="openChatModal('{{ booking.id }}', '{{ booking.photographer_name }}')">Contact
+                    Photographer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // These functions should ideally be in a shared JS file, but putting here for quick access
+    function openChatModal(bookingId, name) {
+        document.getElementById('chat-recipient').innerText = name;
+        document.getElementById('chat-modal').style.display = 'block';
+        loadChatMessages(bookingId);
+    }
+</script>
+{% endblock %}

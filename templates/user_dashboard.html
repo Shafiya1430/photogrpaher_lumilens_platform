@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}My Dashboard - LumiLens{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Welcome, {{ session.name }}! 👋</h1>
+            <p>Ready to capture your next big moment?</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-content">
+                    <h3>{{ bookings|length }}</h3>
+                    <p>Total Bookings</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📸</div>
+                <div class="stat-content">
+                    <p>Active Status</p>
+                    <a href="{{ url_for('photographers') }}">Browse More</a>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">My Bookings</h2>
+
+        {% if bookings %}
+        <div class="bookings-grid">
+            {% for booking_id, booking in bookings.items() %}
+            <div class="booking-card modern">
+                <div class="booking-card-header">
+                    <div class="photographer-info-brief">
+                        <div class="photographer-avatar">{{ booking.photographer_name[0] }}</div>
+                        <div>
+                            <h3>{{ booking.photographer_name }}</h3>
+                            <p class="specialization">{{ booking.event_type }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-info">
+                        <span class="status-label">Status: <strong>{{ booking.status }}</strong></span>
+                        {% set status_pct = {'Requested': 15, 'Accepted': 35, 'Shoot Started': 55, 'Editing': 80,
+                        'Delivered': 100} %}
+                        <span class="pct">{{ status_pct.get(booking.status, 0) }}%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill {{ 'completed' if booking.status == 'Delivered' else '' }}"
+                            style="width: {{ status_pct.get(booking.status, 0) }}%"></div>
+                    </div>
+                </div>
+
+                <div class="booking-meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-label">Date</span>
+                        <span class="meta-value">{{ booking.event_date }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Total</span>
+                        <span class="meta-value">${{ booking.price }}</span>
+                    </div>
+                </div>
+
+                <div class="booking-actions">
+                    <a href="{{ url_for('tracker', booking_id=booking.id) }}" class="btn btn-small btn-secondary">Track
+                        Progress</a>
+                    <div class="action-buttons-group">
+                        <button class="btn-icon"
+                            onclick="openChatModal('{{ booking.id }}', '{{ booking.photographer_name }}')"
+                            title="Chat">💬</button>
+                        <button class="btn-icon" onclick="openCallModal('{{ booking.photographer_name }}')"
+                            title="Call">📞</button>
+                    </div>
+                </div>
+
+                {% if booking.status == 'Delivered' %}
+                <div class="post-booking-actions">
+                    <a href="{{ url_for('review', booking_id=booking.id) }}"
+                        class="btn btn-full btn-small btn-primary">Leave a Review</a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📸</div>
+            <h3>No Bookings Found</h3>
+            <p>You haven't booked any photographers yet.</p>
+            <a href="{{ url_for('photographers') }}" class="btn btn-primary">Discover Photographers</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Chat Modal -->
+<div id="chat-modal" class="modal">
+    <div class="modal-content chat-modal-content">
+        <div class="modal-header">
+            <h3>Chat with <span id="chat-recipient"></span></h3>
+            <span class="close-modal" onclick="closeChatModal()">&times;</span>
+        </div>
+        <div id="chat-history" class="chat-history">
+            <!-- Messages will be loaded here -->
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-message-input" placeholder="Type a message...">
+            <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+<!-- Call Modal -->
+<div id="call-modal" class="modal">
+    <div class="modal-content call-modal-content">
+        <div class="call-ui">
+            <div class="call-avatar" id="call-avatar">?</div>
+            <h2 id="call-name">Calling...</h2>
+            <p id="call-status">Connecting...</p>
+            <div class="call-controls">
+                <button class="btn btn-danger" onclick="closeCallModal()">End Call</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

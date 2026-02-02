@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LumiLens - Photographer Booking Platform{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    {% block navbar %}
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% if session.get('role') == 'photographer' %}{{ url_for('photographer_dashboard') }}{% elif session.get('user') %}{{ url_for('user_dashboard') }}{% else %}{{ url_for('home') }}{% endif %}"
+                class="logo">LumiLens</a>
+            <ul class="nav-links">
+                {% if session.get('user') %}
+                {% if session.get('role') == 'client' %}
+                <li><a href="{{ url_for('user_dashboard') }}" {% if request.endpoint=='user_dashboard' %}class="active"
+                        {% endif %}>Dashboard</a></li>
+                <li><a href="{{ url_for('photographers') }}" {% if request.endpoint=='photographers' %}class="active" {%
+                        endif %}>Browse Photographers</a></li>
+                <li><a href="{{ url_for('gallery') }}" {% if request.endpoint=='gallery' %}class="active" {% endif
+                        %}>Gallery</a></li>
+                {% elif session.get('role') == 'photographer' %}
+                <li><a href="{{ url_for('photographer_dashboard') }}" {% if request.endpoint=='photographer_dashboard'
+                        %}class="active" {% endif %}>Dashboard</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                {% else %}
+                <li><a href="{{ url_for('home') }}" {% if request.endpoint=='home' %}class="active" {% endif %}>Home</a>
+                </li>
+                <li><a href="{{ url_for('login') }}" {% if request.endpoint=='login' %}class="active" {% endif
+                        %}>Login</a></li>
+                <li><a href="{{ url_for('signup') }}" {% if request.endpoint=='signup' %}class="active" {% endif %}>Sign
+                        Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+
+    {% block footer %}
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>LumiLens</h3>
+                    <p>Professional photographer booking platform</p>
+                    <p class="tagline">Capture moments that last forever.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{{ url_for('home') }}">Home</a></li>
+                        {% if session.get('user') %}
+                        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                        {% else %}
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                        <li><a href="{{ url_for('signup') }}">Sign Up</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <p>📧 Email: support@lumilens.com</p>
+                    <p>📞 Phone: +1-800-LUMILENS</p>
+                    <p>📍 Location: New York, NY</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Follow Us</h4>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon" title="Facebook">📘</a>
+                        <a href="#" class="social-icon" title="Instagram">📷</a>
+                        <a href="#" class="social-icon" title="Twitter">🐦</a>
+                        <a href="#" class="social-icon" title="LinkedIn">💼</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LumiLens. All rights reserved. | Built with ❤️ for photographers and clients</p>
+            </div>
+        </div>
+    </footer>
+    {% endblock %}
+
+    {% block chatbot %}
+    {% if session.get('user') %}
+    <div id="chatbot-container">
+        <div id="chatbot-icon" onclick="toggleChatbot()">💬</div>
+        <div id="chatbot-window" style="display: none;">
+            <div class="chatbot-header">
+                <h3>LumiLens Assistant</h3>
+                <button onclick="toggleChatbot()" class="close-btn">×</button>
+            </div>
+            <div id="chatbot-messages">
+                <div class="bot-message">
+                    <p>Hello {{ session.get('name', 'there') }}! 👋 How can I help you today?</p>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbot-input-field" placeholder="Type your message..." autocomplete="off">
+                <button onclick="sendChatbotMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endblock %}
+
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

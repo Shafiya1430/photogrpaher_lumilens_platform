@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Photographers - LumiLens{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="container">
+        <h1 class="page-title">Browse Photographers</h1>
+        <p class="page-subtitle">Find the perfect photographer for your special moments</p>
+
+        <div class="photographers-grid">
+            {% for ph_id, photographer in photographers.items() %}
+            <div class="photographer-card">
+                <div class="photographer-image">
+                    <img src="{{ photographer.portfolio[0] }}" alt="{{ photographer.name }}">
+                </div>
+                <div class="photographer-info">
+                    <h3>{{ photographer.name }}</h3>
+                    <p class="specialization">{{ photographer.specialization }}</p>
+                    <div class="photographer-meta">
+                        <span class="rating">⭐ {{ photographer.rating }}</span>
+                        <span class="reviews">({{ photographer.reviews_count }} reviews)</span>
+                    </div>
+                    <p class="location">📍 {{ photographer.location }}</p>
+                    <p class="experience">{{ photographer.experience }} years exp.</p>
+                    <div class="photographer-footer">
+                        <span class="price">${{ photographer.price }}</span>
+                        <a href="{{ url_for('profile', photographer_id=ph_id) }}" class="btn btn-primary btn-small">View
+                            Profile</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

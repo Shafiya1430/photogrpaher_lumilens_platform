@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book {{ photographer.name }} - LumiLens</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('user_dashboard') }}" class="logo">LumiLens</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('photographers') }}">Browse Photographers</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <div class="container">
+            <h1 class="page-title">Book {{ photographer.name }}</h1>
+            <p class="page-subtitle">{{ photographer.specialization }} • ${{ photographer.price }}</p>
+
+            <div class="booking-form-container">
+                <form method="POST" action="{{ url_for('booking', photographer_id=photographer.id) }}">
+                    <div class="form-group">
+                        <label for="event_type">Event Type</label>
+                        <select id="event_type" name="event_type" required>
+                            <option value="">Select event type</option>
+                            <option value="Wedding">Wedding</option>
+                            <option value="Birthday">Birthday</option>
+                            <option value="Corporate Event">Corporate Event</option>
+                            <option value="Portrait Session">Portrait Session</option>
+                            <option value="Family Photos">Family Photos</option>
+                            <option value="Engagement">Engagement</option>
+                            <option value="Graduation">Graduation</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="event_date">Event Date</label>
+                        <input type="date" id="event_date" name="event_date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" required placeholder="Event location">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="duration">Duration</label>
+                        <select id="duration" name="duration" required>
+                            <option value="">Select duration</option>
+                            <option value="2 hours">2 hours</option>
+                            <option value="4 hours">4 hours</option>
+                            <option value="6 hours">6 hours</option>
+                            <option value="8 hours">8 hours</option>
+                            <option value="Full day">Full day</option>
+                        </select>
+                    </div>
+
+                    <div class="booking-summary">
+                        <h3>Booking Summary</h3>
+                        <p><strong>Photographer:</strong> {{ photographer.name }}</p>
+                        <p><strong>Price:</strong> ${{ photographer.price }}</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full">Proceed to Payment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

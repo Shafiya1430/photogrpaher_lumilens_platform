@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Photographer Dashboard - LumiLens{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="container">
+        <div class="dashboard-header">
+            <div>
+                <h1>Welcome, {{ session.name }}! 👋</h1>
+                <p class="subtitle">Manage your bookings and grow your photography business</p>
+            </div>
+            {% if bookings %}
+            <div class="notification-badge">
+                <span class="badge-count">{{ bookings|length }}</span>
+                <span class="badge-label">Active Bookings</span>
+            </div>
+            {% endif %}
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% if photographer %}
+        <div class="photographer-stats">
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-content">
+                    <h3>{{ photographer.rating }}</h3>
+                    <p>Average Rating</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-content">
+                    <h3>${{ earnings }}</h3>
+                    <p>Total Earnings</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔔</div>
+                <div class="stat-content">
+                    <h3>{{ pending_count }}</h3>
+                    <p>New Requests</p>
+                </div>
+            </div>
+            <div class="stat-card highlight">
+                <div class="stat-icon">📸</div>
+                <div class="stat-content">
+                    <h3>{{ active_count }}</h3>
+                    <p>Active Shoots</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="section-header">
+            <h2 class="section-title">My Bookings</h2>
+            {% if bookings %}
+            <div class="booking-filters">
+                <button class="filter-btn active" onclick="filterBookings('all')">All</button>
+                <button class="filter-btn" onclick="filterBookings('Requested')">Requests</button>
+                <button class="filter-btn" onclick="filterBookings('Accepted')">Accepted</button>
+                <button class="filter-btn" onclick="filterBookings('Shoot Started')">Ongoing</button>
+                <button class="filter-btn" onclick="filterBookings('Delivered')">Completed</button>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if bookings %}
+        <div class="bookings-grid">
+            {% for booking_id, booking in bookings.items() %}
+            <div class="booking-card modern" data-status="{{ booking.status }}">
+                <div class="booking-card-header">
+                    <div class="client-info">
+                        <div class="client-avatar">{{ booking.client_name[0] }}</div>
+                        <div>
+                            <h3>{{ booking.client_name }}</h3>
+                            <p class="booking-id">Booking #{{ booking.id }}</p>
+                        </div>
+                    </div>
+                    <span class="status-badge status-{{ booking.status|lower|replace(' ', '-') }}">
+                        {{ booking.status }}
+                    </span>
+                </div>
+
+                <div class="booking-details">
+                    <div class="detail-item">
+                        <span class="detail-icon">🎉</span>
+                        <div>
+                            <p class="detail-label">Event Type</p>
+                            <p class="detail-value">{{ booking.event_type }}</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-icon">📅</span>
+                        <div>
+                            <p class="detail-label">Event Date</p>
+                            <p class="detail-value">{{ booking.event_date }}</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-icon">💵</span>
+                        <div>
+                            <p class="detail-label">Price</p>
+                            <p class="detail-value">${{ booking.price }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="booking-actions">
+                    <div class="status-update">
+                        <label for="status-{{ booking.id }}">Update Status:</label>
+                        <select id="status-{{ booking.id }}"
+                            onchange="updateBookingStatus('{{ booking.id }}', this.value)" class="status-select">
+                            <option value="Requested" {% if booking.status=='Requested' %}selected{% endif %}>Requested
+                            </option>
+                            <option value="Accepted" {% if booking.status=='Accepted' %}selected{% endif %}>Accepted
+                            </option>
+                            <option value="Shoot Started" {% if booking.status=='Shoot Started' %}selected{% endif %}>
+                                Shoot Started</option>
+                            <option value="Editing" {% if booking.status=='Editing' %}selected{% endif %}>Editing
+                            </option>
+                            <option value="Delivered" {% if booking.status=='Delivered' %}selected{% endif %}>Delivered
+                            </option>
+                        </select>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-small btn-primary"
+                            onclick="openChatModal('{{ booking.id }}', '{{ booking.client_name }}')">
+                            💬 Chat
+                        </button>
+                        <button class="btn btn-small btn-secondary"
+                            onclick="openCallModal('{{ booking.client_name }}')">
+                            📞 Call
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📸</div>
+            <h3>No Bookings Yet</h3>
+            <p>You don't have any bookings. Share your profile to get started!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Chat Modal -->
+<div id="chat-modal" class="modal">
+    <div class="modal-content chat-modal-content">
+        <div class="modal-header">
+            <h3>Chat with <span id="chat-recipient"></span></h3>
+            <span class="close-modal" onclick="closeChatModal()">&times;</span>
+        </div>
+        <div id="chat-history" class="chat-history">
+            <!-- Messages will be loaded here -->
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-message-input" placeholder="Type a message...">
+            <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+<!-- Call Modal -->
+<div id="call-modal" class="modal">
+    <div class="modal-content call-modal-content">
+        <div class="call-ui">
+            <div class="call-avatar" id="call-avatar">?</div>
+            <h2 id="call-name">Calling...</h2>
+            <p id="call-status">Connecting...</p>
+            <div class="call-controls">
+                <button class="btn btn-danger" onclick="closeCallModal()">End Call</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<script>
+    function updateBookingStatus(bookingId, newStatus) {
+        if (!confirm(`Are you sure you want to change the status to "${newStatus}"?`)) {
+            location.reload();
+            return;
+        }
+
+        fetch(`/update-status/${bookingId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `status=${encodeURIComponent(newStatus)}`
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Status updated successfully!', 'success');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showNotification('Failed to update status', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('An error occurred', 'error');
+            });
+    }
+
+    function openChat(bookingId) {
+        alert(`Chat feature coming soon!\nBooking ID: ${bookingId}\n\nThis will open a real-time chat interface with your client.`);
+    }
+
+    function initiateCall(clientName) {
+        alert(`Call feature coming soon!\nClient: ${clientName}\n\nThis will initiate a call with your client.`);
+    }
+
+    function filterBookings(status) {
+        const cards = document.querySelectorAll('.booking-card');
+        const buttons = document.querySelectorAll('.filter-btn');
+
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        cards.forEach(card => {
+            if (status === 'all' || card.dataset.status === status) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+</script>
+{% endblock %}

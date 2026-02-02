@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}LumiLens - Capture Moments That Last Forever{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 class="hero-title">LumiLens</h1>
+        <p class="hero-tagline">Capture moments that last forever.</p>
+        <p class="hero-description">The ultimate platform connecting you with world-class professional photographers.
+        </p>
+        <div class="hero-buttons">
+            {% if not session.get('user') %}
+            <a href="{{ url_for('signup') }}" class="btn btn-primary btn-large">Join LumiLens</a>
+            <a href="{{ url_for('login') }}" class="btn btn-secondary btn-large">Sign In</a>
+            {% else %}
+            <a href="{% if session.role == 'photographer' %}{{ url_for('photographer_dashboard') }}{% else %}{{ url_for('user_dashboard') }}{% endif %}"
+                class="btn btn-primary btn-large">Go to Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">Why Choose LumiLens?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📸</div>
+                <h3>Pro Photographers</h3>
+                <p>Hire verified experts for Weddings, Portraits, Events, and Fashion.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Direct Booking</h3>
+                <p>Seamless real-time booking and scheduling with your favorite artists.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Real-time Sync</h3>
+                <p>Instantly chat, call, and track your project status as it happens.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💎</div>
+                <h3>Premium Quality</h3>
+                <p>Receive high-resolution, professionally edited shots delivered safely.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>Ready to tell your story?</h2>
+        <p>Join thousands of happy clients and professional photographers today.</p>
+        <a href="{{ url_for('signup') }}" class="btn btn-secondary btn-large">Create Free Account</a>
+    </div>
+</section>
+{% endblock %}

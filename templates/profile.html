@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}{{ photographer.name }} - LumiLens{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="container">
+        <div class="profile-header">
+            <div class="profile-info">
+                <h1>{{ photographer.name }}</h1>
+                <p class="specialization">{{ photographer.specialization }}</p>
+                <div class="profile-meta">
+                    <span class="rating">⭐ {{ photographer.rating }}</span>
+                    <span class="reviews">({{ photographer.reviews_count }} reviews)</span>
+                    <span class="location">📍 {{ photographer.location }}</span>
+                </div>
+                <p class="bio">{{ photographer.bio }}</p>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <strong>Experience:</strong> {{ photographer.experience }} years
+                    </div>
+                    <div class="stat">
+                        <strong>Price:</strong> ${{ photographer.price }}
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <a href="{{ url_for('booking', photographer_id=photographer.id) }}" class="btn btn-primary">Book
+                        Now</a>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Portfolio</h2>
+        <div class="portfolio-grid">
+            {% for image in photographer.portfolio %}
+            <div class="portfolio-item">
+                <img src="{{ image }}" alt="Portfolio">
+            </div>
+            {% endfor %}
+        </div>
+
+        <h2 class="section-title">Recent Reviews</h2>
+        <div class="reviews-list">
+            {% if photographer.reviews %}
+            {% for review in photographer.reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <h4>{{ review.client }}</h4>
+                    <span class="review-rating">⭐ {{ review.rating }}/5</span>
+                </div>
+                <p>{{ review.comment }}</p>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="empty-text">No reviews yet. Be the first to book!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

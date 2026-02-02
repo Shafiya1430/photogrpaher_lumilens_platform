@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - LumiLens</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('user_dashboard') }}" class="logo">LumiLens</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('user_dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <div class="container">
+            <h1 class="page-title">Complete Payment</h1>
+            <p class="page-subtitle">Booking ID: {{ booking.id }}</p>
+
+            <div class="payment-container">
+                <div class="payment-summary">
+                    <h3>Booking Details</h3>
+                    <p><strong>Photographer:</strong> {{ booking.photographer_name }}</p>
+                    <p><strong>Event:</strong> {{ booking.event_type }}</p>
+                    <p><strong>Date:</strong> {{ booking.event_date }}</p>
+                    <p><strong>Location:</strong> {{ booking.location }}</p>
+                    <p><strong>Duration:</strong> {{ booking.duration }}</p>
+                    <hr>
+                    <p class="total-price"><strong>Total Amount:</strong> ${{ booking.price }}</p>
+                </div>
+
+                <div class="payment-form">
+                    <h3>Payment Method</h3>
+                    <form method="POST" action="{{ url_for('payment', booking_id=booking.id) }}">
+                        <div class="payment-methods">
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="Credit Card" required>
+                                <span>💳 Credit/Debit Card</span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="UPI" required>
+                                <span>📱 UPI</span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="Wallet" required>
+                                <span>👛 Digital Wallet</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full">Pay ${{ booking.price }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
