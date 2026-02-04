@@ -1,7 +1,7 @@
 """
 AWS Integration Module for LumiLens
 This file contains AWS service integrations using boto3
-Includes: DynamoDB, SNS, and IAM configurations
+Includes: DynamoDB, and IAM configurations
 """
 
 import boto3
@@ -15,7 +15,6 @@ AWS_REGION = 'us-east-1'
 
 # Initialize AWS clients
 dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
-sns_client = boto3.client('sns', region_name=AWS_REGION)
 iam_client = boto3.client('iam', region_name=AWS_REGION)
 
 # ==================== DYNAMODB TABLES ====================
@@ -130,60 +129,6 @@ def update_booking_status_dynamodb(booking_id, new_status):
         print(f"Error updating booking status: {e}")
         return False
 
-# ==================== SNS NOTIFICATIONS ====================
-
-def create_sns_topic():
-    """Create SNS topic for booking notifications"""
-    try:
-        response = sns_client.create_topic(Name='LumiLens_Booking_Notifications')
-        topic_arn = response['TopicArn']
-        print(f"SNS topic created: {topic_arn}")
-        return topic_arn
-    except ClientError as e:
-        print(f"Error creating SNS topic: {e}")
-        return None
-
-def send_booking_notification(topic_arn, booking_data):
-    """Send booking notification via SNS"""
-    try:
-        message = f"""
-        New Booking Notification - LumiLens
-        
-        Booking ID: {booking_data['id']}
-        Client: {booking_data['client_name']}
-        Photographer: {booking_data['photographer_name']}
-        Event Type: {booking_data['event_type']}
-        Event Date: {booking_data['event_date']}
-        Status: {booking_data['status']}
-        
-        Please check your dashboard for more details.
-        """
-        
-        response = sns_client.publish(
-            TopicArn=topic_arn,
-            Subject='New Booking - LumiLens',
-            Message=message
-        )
-        print(f"Notification sent: {response['MessageId']}")
-        return True
-    except ClientError as e:
-        print(f"Error sending notification: {e}")
-        return False
-
-def subscribe_email_to_topic(topic_arn, email):
-    """Subscribe email to SNS topic"""
-    try:
-        response = sns_client.subscribe(
-            TopicArn=topic_arn,
-            Protocol='email',
-            Endpoint=email
-        )
-        print(f"Email {email} subscribed to topic")
-        return response['SubscriptionArn']
-    except ClientError as e:
-        print(f"Error subscribing email: {e}")
-        return None
-
 # ==================== IAM ROLES ====================
 
 def create_ec2_role():
@@ -223,48 +168,23 @@ def attach_dynamodb_policy_to_role(role_name):
     except ClientError as e:
         print(f"Error attaching policy: {e}")
         return False
-
-def attach_sns_policy_to_role(role_name):
-    """Attach SNS access policy to IAM role"""
-    try:
-        iam_client.attach_role_policy(
-            RoleName=role_name,
-            PolicyArn='arn:aws:iam::aws:policy/AmazonSNSFullAccess'
-        )
-        print(f"SNS policy attached to {role_name}")
-        return True
-    except ClientError as e:
-        print(f"Error attaching policy: {e}")
-        return False
-
 # ==================== SETUP FUNCTION ====================
 
 def setup_aws_infrastructure():
-    """Setup all AWS infrastructure"""
     print("Setting up AWS infrastructure for LumiLens...")
-    
-    # Create DynamoDB tables
+
     print("\n1. Creating DynamoDB tables...")
     create_users_table()
     create_photographers_table()
     create_bookings_table()
-    
-    # Create SNS topic
-    print("\n2. Creating SNS topic...")
-    topic_arn = create_sns_topic()
-    
-    # Create IAM role
-    print("\n3. Creating IAM role...")
+
+    print("\n2. Creating IAM role...")
     role = create_ec2_role()
     if role:
         attach_dynamodb_policy_to_role('LumiLens_EC2_Role')
-        attach_sns_policy_to_role('LumiLens_EC2_Role')
-    
+
     print("\nAWS infrastructure setup complete!")
-    print(f"SNS Topic ARN: {topic_arn}")
-    
     return {
-        'topic_arn': topic_arn,
         'role': role
     }
 

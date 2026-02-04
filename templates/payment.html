@@ -33,7 +33,7 @@
                     <p><strong>Location:</strong> {{ booking.location }}</p>
                     <p><strong>Duration:</strong> {{ booking.duration }}</p>
                     <hr>
-                    <p class="total-price"><strong>Total Amount:</strong> ${{ booking.price }}</p>
+                    <p class="total-price"><strong>Total Amount:</strong> ₹{{ booking.price }}</p>
                 </div>
 
                 <div class="payment-form">
@@ -54,7 +54,7 @@
                             </label>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-full">Pay ${{ booking.price }}</button>
+                        <button type="submit" class="btn btn-primary btn-full">Pay ₹{{ booking.price }}</button>
                     </form>
                 </div>
             </div>

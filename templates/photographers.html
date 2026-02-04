@@ -24,7 +24,7 @@
                     <p class="location">📍 {{ photographer.location }}</p>
                     <p class="experience">{{ photographer.experience }} years exp.</p>
                     <div class="photographer-footer">
-                        <span class="price">${{ photographer.price }}</span>
+                        <span class="price">₹{{ photographer.price }}</span>
                         <a href="{{ url_for('profile', photographer_id=ph_id) }}" class="btn btn-primary btn-small">View
                             Profile</a>
                     </div>

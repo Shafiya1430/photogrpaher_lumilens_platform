@@ -23,7 +23,7 @@
     <div class="page-container">
         <div class="container">
             <h1 class="page-title">Book {{ photographer.name }}</h1>
-            <p class="page-subtitle">{{ photographer.specialization }} • ${{ photographer.price }}</p>
+            <p class="page-subtitle">{{ photographer.specialization }} • ₹{{ photographer.price }}</p>
 
             <div class="booking-form-container">
                 <form method="POST" action="{{ url_for('booking', photographer_id=photographer.id) }}">
@@ -67,7 +67,7 @@
                     <div class="booking-summary">
                         <h3>Booking Summary</h3>
                         <p><strong>Photographer:</strong> {{ photographer.name }}</p>
-                        <p><strong>Price:</strong> ${{ photographer.price }}</p>
+                        <p><strong>Price:</strong> ₹{{ photographer.price }}</p>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-full">Proceed to Payment</button>

@@ -13,13 +13,13 @@ users_db = {
         'password': 'password123',
         'name': 'Sarah Johnson',
         'role': 'client',
-        'phone': '+1-555-0101'
+        'phone': '+91-98765-43210'
     },
     'photographer1@example.com': {
         'password': 'photo123',
         'name': 'Alex Rivera',
         'role': 'photographer',
-        'phone': '+1-555-0201'
+        'phone': '+91-98765-43211'
     }
 }
 
@@ -30,11 +30,11 @@ photographers_db = {
         'name': 'Alex Rivera',
         'email': 'photographer1@example.com',
         'specialization': 'Wedding',
-        'price': 1500,
+        'price': 80000,
         'rating': 4.9,
         'reviews_count': 127,
         'experience': '8',
-        'location': 'New York',
+        'location': 'Mumbai',
         'bio': 'Passionate wedding photographer capturing love stories.',
         'portfolio': [
             'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
@@ -47,11 +47,11 @@ photographers_db = {
         'name': 'Maya Patel',
         'email': 'maya.patel@lumilens.com',
         'specialization': 'Portrait',
-        'price': 800,
+        'price': 15000,
         'rating': 4.8,
         'reviews_count': 95,
         'experience': '6',
-        'location': 'Los Angeles',
+        'location': 'Bangalore',
         'bio': 'Creating timeless portraits.',
         'portfolio': [
             'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=800'
@@ -63,11 +63,11 @@ photographers_db = {
         'name': 'James Mitchell',
         'email': 'james.mitchell@lumilens.com',
         'specialization': 'Event',
-        'price': 1200,
+        'price': 25000,
         'rating': 4.7,
         'reviews_count': 83,
         'experience': '10',
-        'location': 'Chicago',
+        'location': 'Delhi',
         'bio': 'Documenting corporate events.',
         'portfolio': [
             'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800'
@@ -456,9 +456,9 @@ def chatbot():
     if 'book' in user_message or 'booking' in user_message:
         response = "To book a photographer, browse our photographers page, select your preferred photographer, and click 'Book Now'. You'll be guided through the booking process step by step!"
     elif 'price' in user_message or 'cost' in user_message or 'pricing' in user_message:
-        response = "Our photographers offer competitive pricing starting from $500. Prices vary based on specialization and experience. Check individual photographer profiles for exact pricing."
+        response = "Our photographers offer competitive pricing starting from ₹10,000. Prices vary based on specialization and experience. Check individual photographer profiles for exact pricing."
     elif 'contact' in user_message or 'support' in user_message or 'help' in user_message:
-        response = "You can reach us at support@lumilens.com or call +1-800-LUMILENS. We're here to help 24/7!"
+        response = "You can reach us at support@lumilens.com or call +91-1800-LUMILENS. We're here to help 24/7!"
     elif 'payment' in user_message or 'pay' in user_message:
         response = "We accept all major payment methods including Credit/Debit Cards, UPI, and Digital Wallets. Payment is secure and processed after booking confirmation."
     elif 'track' in user_message or 'status' in user_message:
